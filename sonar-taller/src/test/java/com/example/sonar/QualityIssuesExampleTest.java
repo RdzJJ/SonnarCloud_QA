@@ -22,7 +22,7 @@ class QualityIssuesExampleTest {
         Stats resultado = example.procesamientoDeDatos(datos);
         
         assertEquals(50, resultado.getSuma());
-        assertEquals(3000, resultado.getMultiplicacion());
+        assertEquals(24, resultado.getMultiplicacion());
         assertEquals(8.33, resultado.getPromedio(), 0.01);
         assertTrue(resultado.getPares().contains(2));
         assertTrue(resultado.getPares().contains(4));

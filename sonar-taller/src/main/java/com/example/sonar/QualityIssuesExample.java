@@ -33,7 +33,11 @@ public class QualityIssuesExample {
     // Métodos auxiliares para reducir complejidad
     private void procesarNumero(int numero, Stats stats) {
         stats.agregarSuma(numero);
-        stats.agregarMultiplicacion(numero);
+        
+        // Solo multiplicar números menores o iguales a 10
+        if (numero <= LIMITE_MAYOR) {
+            stats.agregarMultiplicacion(numero);
+        }
         
         if (esPar(numero)) {
             stats.setPares(numero);
