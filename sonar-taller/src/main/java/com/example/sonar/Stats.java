@@ -15,7 +15,7 @@ public class Stats {
 
     public Stats() {
         this.suma = 0;
-        this.multiplicacion = 0;
+        this.multiplicacion = 1;
         this.promedio = 0.0;
         this.pares = new ArrayList<>();
         this.impares = new ArrayList<>();

@@ -29,8 +29,8 @@ class NewIssueExampleTest {
     @Test
     @DisplayName("Test compute con valores límite")
     void testComputeEdgeCases() {
-        assertEquals(Integer.MAX_VALUE * 2L, (long)example.compute(Integer.MAX_VALUE));
-        assertEquals(Integer.MIN_VALUE * 2L, (long)example.compute(Integer.MIN_VALUE));
+        assertEquals(Integer.MAX_VALUE * 2L, example.compute(Integer.MAX_VALUE));
+        assertEquals(Integer.MIN_VALUE * 2L, example.compute(Integer.MIN_VALUE));
     }
 
     @ParameterizedTest
@@ -62,9 +62,9 @@ class NewIssueExampleTest {
         int minValue = Integer.MIN_VALUE;
         
         // Verificar comportamiento con valores cerca del límite
-        assertEquals(maxValue * 2L, (long)example.compute(maxValue));
-        assertEquals(minValue * 2L, (long)example.compute(minValue));
-        assertEquals((maxValue - 1) * 2L, (long)example.compute(maxValue - 1));
-        assertEquals((minValue + 1) * 2L, (long)example.compute(minValue + 1));
+        assertEquals(maxValue * 2L, example.compute(maxValue));
+        assertEquals(minValue * 2L, example.compute(minValue));
+        assertEquals((maxValue - 1) * 2L, example.compute(maxValue - 1));
+        assertEquals((minValue + 1) * 2L, example.compute(minValue + 1));
     }
 }
