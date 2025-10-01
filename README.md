@@ -26,7 +26,6 @@ Este repositorio es un laboratorio práctico diseñado para explorar y comprende
 |-------------|
 | Juan Felipe Joaqui |
 | Julian Andres Rodriguez |
-| Carlos Danilo Velez |
 
 ## 🛠️ Estructura del Proyecto
 
