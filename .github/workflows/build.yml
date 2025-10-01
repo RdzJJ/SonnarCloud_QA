@@ -69,13 +69,13 @@ jobs:
         run: |
           if [ -z "${SONAR_TOKEN}" ]; then echo "SONAR_TOKEN is empty"; exit 1; else echo "SONAR_TOKEN present"; fi
 
-      - name: Run SonarCloud analysis
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.projectKey=RdzJJ_SonnarCloud_QA
+            -Dsonar.organization=rdzijj
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B -Dsonar.projectKey=RdzJJ_SonnarCloud_QA \
-          -Dsonar.organization=rdzijj \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ env.SONAR_TOKEN }} \
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-          -Dsonar.verbose=true \
-          sonar:sonar
