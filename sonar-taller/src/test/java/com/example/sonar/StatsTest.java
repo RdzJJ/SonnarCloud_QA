@@ -13,25 +13,40 @@ class StatsTest {
     @BeforeEach
     void setUp() {
         stats = new Stats();
-        stats.setSuma(100);
-        stats.setMultiplicacion(1000);
+        // Inicializar suma y multiplicación
+        stats.agregarSuma(50);
+        stats.agregarSuma(50);
+        stats.agregarMultiplicacion(100);
+        stats.agregarMultiplicacion(10);
         stats.setPromedio(20.0);
-        stats.setPares(Arrays.asList(2, 4, 6));
-        stats.setImpares(Arrays.asList(1, 3, 5));
-        stats.setMayoresAlLimite(Arrays.asList(15, 20, 25));
+        
+        // Agregar números pares
+        stats.setPares(2);
+        stats.setPares(4);
+        stats.setPares(6);
+        
+        // Agregar números impares
+        stats.setImpares(1);
+        stats.setImpares(3);
+        stats.setImpares(5);
+        
+        // Agregar números mayores al límite
+        stats.setMayoresAlLimite(15);
+        stats.setMayoresAlLimite(20);
+        stats.setMayoresAlLimite(25);
     }
 
     @Test
-    @DisplayName("Test getters y setters básicos")
-    void testBasicGettersAndSetters() {
+    @DisplayName("Test operaciones básicas")
+    void testBasicOperations() {
         assertEquals(100, stats.getSuma());
         assertEquals(1000, stats.getMultiplicacion());
         assertEquals(20.0, stats.getPromedio());
     }
 
     @Test
-    @DisplayName("Test getters y setters de listas")
-    void testListGettersAndSetters() {
+    @DisplayName("Test operaciones con listas")
+    void testListOperations() {
         List<Integer> pares = stats.getPares();
         List<Integer> impares = stats.getImpares();
         List<Integer> mayores = stats.getMayoresAlLimite();
@@ -39,54 +54,60 @@ class StatsTest {
         assertTrue(pares.containsAll(Arrays.asList(2, 4, 6)));
         assertTrue(impares.containsAll(Arrays.asList(1, 3, 5)));
         assertTrue(mayores.containsAll(Arrays.asList(15, 20, 25)));
-
-        // Probar setters con nuevas listas
-        List<Integer> nuevosPares = Arrays.asList(8, 10, 12);
-        List<Integer> nuevosImpares = Arrays.asList(7, 9, 11);
-        List<Integer> nuevosMayores = Arrays.asList(30, 35, 40);
-
-        stats.setPares(nuevosPares);
-        stats.setImpares(nuevosImpares);
-        stats.setMayoresAlLimite(nuevosMayores);
-
-        assertEquals(nuevosPares, stats.getPares());
-        assertEquals(nuevosImpares, stats.getImpares());
-        assertEquals(nuevosMayores, stats.getMayoresAlLimite());
     }
 
     @Test
-    @DisplayName("Test valores extremos")
-    void testExtremeValues() {
-        stats.setSuma(Integer.MAX_VALUE);
-        stats.setMultiplicacion(Long.MAX_VALUE);
-        stats.setPromedio(Double.MAX_VALUE);
-
-        assertEquals(Integer.MAX_VALUE, stats.getSuma());
-        assertEquals(Long.MAX_VALUE, stats.getMultiplicacion());
-        assertEquals(Double.MAX_VALUE, stats.getPromedio());
+    @DisplayName("Test acumulación de valores")
+    void testAccumulation() {
+        Stats newStats = new Stats();
+        
+        // Probar suma acumulativa
+        newStats.agregarSuma(5);
+        assertEquals(5, newStats.getSuma());
+        newStats.agregarSuma(10);
+        assertEquals(15, newStats.getSuma());
+        
+        // Probar multiplicación acumulativa
+        newStats.agregarMultiplicacion(2);
+        assertEquals(2, newStats.getMultiplicacion());
+        newStats.agregarMultiplicacion(3);
+        assertEquals(6, newStats.getMultiplicacion());
     }
 
     @Test
-    @DisplayName("Test listas vacías")
-    void testEmptyLists() {
-        stats.setPares(List.of());
-        stats.setImpares(List.of());
-        stats.setMayoresAlLimite(List.of());
-
-        assertTrue(stats.getPares().isEmpty());
-        assertTrue(stats.getImpares().isEmpty());
-        assertTrue(stats.getMayoresAlLimite().isEmpty());
+    @DisplayName("Test inmutabilidad de listas")
+    void testListImmutability() {
+        List<Integer> pares = stats.getPares();
+        List<Integer> impares = stats.getImpares();
+        List<Integer> mayores = stats.getMayoresAlLimite();
+        
+        assertThrows(UnsupportedOperationException.class, () -> pares.add(8));
+        assertThrows(UnsupportedOperationException.class, () -> impares.add(7));
+        assertThrows(UnsupportedOperationException.class, () -> mayores.add(30));
     }
 
     @Test
-    @DisplayName("Test null en listas")
-    void testNullLists() {
-        stats.setPares(null);
-        stats.setImpares(null);
-        stats.setMayoresAlLimite(null);
+    @DisplayName("Test toString")
+    void testToString() {
+        String result = stats.toString();
+        assertTrue(result.contains("suma=100"));
+        assertTrue(result.contains("multiplicacion=1000"));
+        assertTrue(result.contains("promedio=20.0"));
+        assertTrue(result.contains("pares=[2, 4, 6]"));
+        assertTrue(result.contains("impares=[1, 3, 5]"));
+        assertTrue(result.contains("mayoresAlLimite=[15, 20, 25]"));
+    }
 
-        assertNull(stats.getPares());
-        assertNull(stats.getImpares());
-        assertNull(stats.getMayoresAlLimite());
+    @Test
+    @DisplayName("Test constructor por defecto")
+    void testDefaultConstructor() {
+        Stats newStats = new Stats();
+        assertEquals(0, newStats.getSuma());
+        assertEquals(1, newStats.getMultiplicacion()); // Multiplicación inicia en 1
+        assertEquals(0.0, newStats.getPromedio());
+        assertTrue(newStats.getPares().isEmpty());
+        assertTrue(newStats.getImpares().isEmpty());
+        assertTrue(newStats.getMayoresAlLimite().isEmpty());
+        assertTrue(newStats.getMenoresAlLimite().isEmpty());
     }
 }
