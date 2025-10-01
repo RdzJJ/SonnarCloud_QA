@@ -8,12 +8,25 @@ public class QualityIssuesExample {
     private static final Logger LOGGER = Logger.getLogger(QualityIssuesExample.class.getName());
     private static final int LIMITE_MAYOR = 10;
     private static final int LIMITE_MUY_MAYOR = 20;
+    
+    // Constantes para mensajes
+    private static final String MSG_ARRAY_VACIO = "Array de datos vacío o nulo";
+    private static final String MSG_TIPO_LISTA_NULA = "Tipo o lista de números es nula";
+    private static final String MSG_DIVISION_CERO = "Intento de división por cero en %d/%d";
+    private static final String MSG_ARRAY_NULO = "El array no puede ser nulo";
+    private static final String MSG_INDICE_FUERA_RANGO = "Índice %d fuera de rango [0-%d]";
+    private static final String MSG_TEXTO_NULO = "Se recibió un texto nulo";
+    private static final String MSG_OPERACION_NULA = "La operación no puede ser nula";
+    private static final String MSG_OPERACION_NO_SOPORTADA = "Operación no soportada: %s";
+    private static final String MSG_DIVISION_NO_PERMITIDA = "División por cero no permitida";
+    private static final String MSG_EXPONENTE_NEGATIVO = "Exponente negativo no soportado";
+    private static final String MSG_MIN_MAYOR_MAX = "El mínimo no puede ser mayor que el máximo";
 
     // Método principal refactorizado
     public Stats procesamientoDeDatos(int[] datos) {
         if (datos == null || datos.length == 0) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning("Array de datos vacío o nulo");
+                LOGGER.warning(MSG_ARRAY_VACIO);
             }
             return new Stats();
         }
@@ -90,7 +103,7 @@ public class QualityIssuesExample {
     private void procesarLista(String tipo, List<Integer> numeros) {
         if (tipo == null || numeros == null) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning("Tipo o lista de números es nula");
+                LOGGER.warning(MSG_TIPO_LISTA_NULA);
             }
             return;
         }
@@ -134,7 +147,7 @@ public class QualityIssuesExample {
     public double divisionSegura(int numerador, int denominador) {
         if (denominador == 0) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning(String.format("Intento de división por cero en %d/%d", numerador, denominador));
+                LOGGER.warning(String.format(MSG_DIVISION_CERO, numerador, denominador));
             }
             return 0.0;
         }
@@ -143,10 +156,10 @@ public class QualityIssuesExample {
 
     public int accederArray(int[] array, int indice) {
         if (array == null) {
-            throw new IllegalArgumentException("El array no puede ser nulo");
+            throw new IllegalArgumentException(MSG_ARRAY_NULO);
         }
         if (indice < 0 || indice >= array.length) {
-            throw new IndexOutOfBoundsException(String.format("Índice %d fuera de rango [0-%d]", indice, array.length - 1));
+            throw new IndexOutOfBoundsException(String.format(MSG_INDICE_FUERA_RANGO, indice, array.length - 1));
         }
         return array[indice];
     }
@@ -154,7 +167,7 @@ public class QualityIssuesExample {
     public String procesarTexto(String texto) {
         if (texto == null) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning("Se recibió un texto nulo");
+                LOGGER.warning(MSG_TEXTO_NULO);
             }
             return "";
         }
@@ -164,7 +177,7 @@ public class QualityIssuesExample {
     // Métodos para coverage con validaciones
     public int calculoComplejo(int a, int b, String operacion) {
         if (operacion == null) {
-            throw new IllegalArgumentException("La operación no puede ser nula");
+            throw new IllegalArgumentException(MSG_OPERACION_NULA);
         }
 
         return switch (operacion.toLowerCase()) {
@@ -173,27 +186,27 @@ public class QualityIssuesExample {
             case "multiplicacion" -> a * b;
             case "division" -> validarYDividir(a, b);
             case "potencia" -> validarYCalcularPotencia(a, b);
-            default -> throw new IllegalArgumentException("Operación no soportada: " + operacion);
+            default -> throw new IllegalArgumentException(String.format(MSG_OPERACION_NO_SOPORTADA, operacion));
         };
     }
 
     private int validarYDividir(int a, int b) {
         if (b == 0) {
-            throw new ArithmeticException("División por cero no permitida");
+            throw new ArithmeticException(MSG_DIVISION_NO_PERMITIDA);
         }
         return a / b;
     }
 
     private int validarYCalcularPotencia(int base, int exponente) {
         if (exponente < 0) {
-            throw new IllegalArgumentException("Exponente negativo no soportado");
+            throw new IllegalArgumentException(MSG_EXPONENTE_NEGATIVO);
         }
         return (int) Math.pow(base, exponente);
     }
 
     public boolean validarRango(int numero, int min, int max) {
         if (min > max) {
-            throw new IllegalArgumentException("El mínimo no puede ser mayor que el máximo");
+            throw new IllegalArgumentException(MSG_MIN_MAYOR_MAX);
         }
         return numero >= min && numero <= max;
     }

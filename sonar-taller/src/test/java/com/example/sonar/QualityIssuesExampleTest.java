@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QualityIssuesExampleTest {
-    
+    private static final String DEFAULT_WELCOME_MESSAGE = "Hola desconocido, bienvenido al sistema";
+    private static final int EXPECTED_MULTIPLICATION = 24;
     private QualityIssuesExample example;
 
     @BeforeEach
@@ -84,9 +85,9 @@ class QualityIssuesExampleTest {
         assertEquals("Hola María, bienvenido al sistema", example.generarMensajeBienvenida("María"));
         
         // Casos especiales
-        assertEquals("Hola desconocido, bienvenido al sistema", example.generarMensajeBienvenida(null));
-        assertEquals("Hola desconocido, bienvenido al sistema", example.generarMensajeBienvenida(""));
-        assertEquals("Hola desconocido, bienvenido al sistema", example.generarMensajeBienvenida("   "));
+        assertEquals(DEFAULT_WELCOME_MESSAGE, example.generarMensajeBienvenida(null));
+        assertEquals(DEFAULT_WELCOME_MESSAGE, example.generarMensajeBienvenida(""));
+        assertEquals(DEFAULT_WELCOME_MESSAGE, example.generarMensajeBienvenida("   "));
         assertEquals("Hola Juan Carlos, bienvenido al sistema", example.generarMensajeBienvenida("  Juan Carlos  "));
     }
 
