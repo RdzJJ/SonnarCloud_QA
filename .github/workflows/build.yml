@@ -70,12 +70,11 @@ jobs:
           if [ -z "${SONAR_TOKEN}" ]; then echo "SONAR_TOKEN is empty"; exit 1; else echo "SONAR_TOKEN present"; fi
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         with:
           args: >
             -Dsonar.projectKey=RdzJJ_SonnarCloud_QA
-            -Dsonar.organization=rdzijj
-              -Dsonar.organization=rdzjj
+            -Dsonar.organization=rdzjj
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
