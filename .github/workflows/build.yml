@@ -43,8 +43,8 @@ jobs:
           echo "Java version:"; java -version || true
           echo "Maven version:"; mvn -v || true
 
-      - name: Build (run tests and generate reports)
-        run: mvn -B -DskipTests=false verify
+      - name: Build (compile, test and generate reports)
+        run: mvn -B clean compile test verify
 
       - name: List jacoco output (diagnostic)
         run: |
@@ -72,10 +72,12 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         with:
+          projectBaseDir: sonar-taller
           args: >
             -Dsonar.projectKey=RdzJJ_SonnarCloud_QA
             -Dsonar.organization=rdzjj
             -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.java.binaries=target/classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
