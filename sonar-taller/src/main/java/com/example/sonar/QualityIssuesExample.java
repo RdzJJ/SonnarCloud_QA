@@ -2,6 +2,7 @@ package com.example.sonar;
 
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class QualityIssuesExample {
     private static final Logger LOGGER = Logger.getLogger(QualityIssuesExample.class.getName());
@@ -11,7 +12,9 @@ public class QualityIssuesExample {
     // Método principal refactorizado
     public Stats procesamientoDeDatos(int[] datos) {
         if (datos == null || datos.length == 0) {
-            LOGGER.warning("Array de datos vacío o nulo");
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.warning("Array de datos vacío o nulo");
+            }
             return new Stats();
         }
 
@@ -58,13 +61,21 @@ public class QualityIssuesExample {
     }
 
     private void imprimirResumen(Stats stats) {
-        LOGGER.info(String.format("Suma: %d", stats.getSuma()));
-        LOGGER.info(String.format("Multiplicación: %d", stats.getMultiplicacion()));
-        LOGGER.info(String.format("Promedio: %.2f", stats.getPromedio()));
-        LOGGER.info(String.format("Números pares: %s", stats.getPares()));
-        LOGGER.info(String.format("Números impares: %s", stats.getImpares()));
-        LOGGER.info(String.format("Mayores a %d: %s", LIMITE_MAYOR, stats.getMayoresAlLimite()));
-        LOGGER.info(String.format("Menores a %d: %s", LIMITE_MAYOR, stats.getMenoresAlLimite()));
+        if (LOGGER.isLoggable(java.util.logging.Level.INFO)) {
+            String[] mensajes = {
+                String.format("Suma: %d", stats.getSuma()),
+                String.format("Multiplicación: %d", stats.getMultiplicacion()),
+                String.format("Promedio: %.2f", stats.getPromedio()),
+                String.format("Números pares: %s", stats.getPares()),
+                String.format("Números impares: %s", stats.getImpares()),
+                String.format("Mayores a %d: %s", LIMITE_MAYOR, stats.getMayoresAlLimite()),
+                String.format("Menores a %d: %s", LIMITE_MAYOR, stats.getMenoresAlLimite())
+            };
+            
+            for (String mensaje : mensajes) {
+                LOGGER.info(mensaje);
+            }
+        }
     }
 
     private void procesarListasNumeros(Stats stats) {
@@ -73,22 +84,36 @@ public class QualityIssuesExample {
     }
 
     private void procesarLista(String tipo, List<Integer> numeros) {
+        if (tipo == null || numeros == null) {
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.warning("Tipo o lista de números es nula");
+            }
+            return;
+        }
+        
         for (int num : numeros) {
-            LOGGER.info(String.format("Procesando %s: %d", tipo, num));
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info(String.format("Procesando %s: %d", tipo, num));
+            }
             clasificarNumero(num, tipo);
         }
     }
 
-    private void clasificarNumero(int numero, String tipo) {
-        String mensaje;
+    private String determinarMensajeClasificacion(int numero, String tipo) {
         if (numero > LIMITE_MUY_MAYOR) {
-            mensaje = String.format("%s mayor a %d", tipo, LIMITE_MUY_MAYOR);
+            return String.format("%s mayor a %d", tipo, LIMITE_MUY_MAYOR);
         } else if (numero > LIMITE_MAYOR) {
-            mensaje = String.format("%s mayor a %d", tipo, LIMITE_MAYOR);
+            return String.format("%s mayor a %d", tipo, LIMITE_MAYOR);
         } else {
-            mensaje = String.format("%s menor o igual a %d", tipo, LIMITE_MAYOR);
+            return String.format("%s menor o igual a %d", tipo, LIMITE_MAYOR);
         }
-        LOGGER.info(mensaje);
+    }
+
+    private void clasificarNumero(int numero, String tipo) {
+        String mensaje = determinarMensajeClasificacion(numero, tipo);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info(mensaje);
+        }
     }
 
     // Método unificado para mensajes (eliminada duplicación)
@@ -104,7 +129,9 @@ public class QualityIssuesExample {
     // Reliability Issues corregidos con validaciones
     public double divisionSegura(int numerador, int denominador) {
         if (denominador == 0) {
-            LOGGER.warning(String.format("Intento de división por cero en %d/%d", numerador, denominador));
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.warning(String.format("Intento de división por cero en %d/%d", numerador, denominador));
+            }
             return 0.0;
         }
         return (double) numerador / denominador;
@@ -122,7 +149,9 @@ public class QualityIssuesExample {
 
     public String procesarTexto(String texto) {
         if (texto == null) {
-            LOGGER.warning("Se recibió un texto nulo");
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.warning("Se recibió un texto nulo");
+            }
             return "";
         }
         return texto.toLowerCase();
