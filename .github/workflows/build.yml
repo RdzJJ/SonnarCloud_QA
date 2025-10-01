@@ -75,6 +75,7 @@ jobs:
           args: >
             -Dsonar.projectKey=RdzJJ_SonnarCloud_QA
             -Dsonar.organization=rdzijj
+              -Dsonar.organization=rdzjj
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
