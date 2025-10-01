@@ -2,144 +2,178 @@ package com.example.sonar;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class QualityIssuesExample {
+    private static final Logger LOGGER = Logger.getLogger(QualityIssuesExample.class.getName());
+    private static final int LIMITE_MAYOR = 10;
+    private static final int LIMITE_MUY_MAYOR = 20;
     
-    // 1. Maintainability Issue: Método muy largo y complejo
-    public void procesamientoDeDatos(int[] datos) {
-        // Método intencionalmente largo y complejo para generar issues de mantenibilidad
+    // Clase auxiliar para mantener estadísticas
+    private static class Stats {
         int suma = 0;
         int multiplicacion = 1;
         double promedio = 0;
         List<Integer> pares = new ArrayList<>();
         List<Integer> impares = new ArrayList<>();
-        List<Integer> mayoresA10 = new ArrayList<>();
-        List<Integer> menoresA10 = new ArrayList<>();
-        
-        // Procesamiento innecesariamente complejo
-        for (int i = 0; i < datos.length; i++) {
-            int numero = datos[i];
-            suma += numero;
-            multiplicacion *= numero;
-            
-            if (numero % 2 == 0) {
-                pares.add(numero);
-                if (numero > 10) {
-                    mayoresA10.add(numero);
-                } else {
-                    menoresA10.add(numero);
-                }
-            } else {
-                impares.add(numero);
-                if (numero > 10) {
-                    mayoresA10.add(numero);
-                } else {
-                    menoresA10.add(numero);
-                }
-            }
+        List<Integer> mayoresAlLimite = new ArrayList<>();
+        List<Integer> menoresAlLimite = new ArrayList<>();
+    }
+
+    // Método principal refactorizado
+    public Stats procesamientoDeDatos(int[] datos) {
+        if (datos == null || datos.length == 0) {
+            LOGGER.warning("Array de datos vacío o nulo");
+            return new Stats();
+        }
+
+        Stats stats = new Stats();
+        for (int numero : datos) {
+            procesarNumero(numero, stats);
         }
         
-        // Más procesamiento innecesario
-        promedio = suma / datos.length;
+        stats.promedio = calcularPromedio(stats.suma, datos.length);
+        imprimirResumen(stats);
+        procesarListasNumeros(stats);
         
-        System.out.println("Suma: " + suma);
-        System.out.println("Multiplicación: " + multiplicacion);
-        System.out.println("Promedio: " + promedio);
-        System.out.println("Números pares: " + pares);
-        System.out.println("Números impares: " + impares);
-        System.out.println("Mayores a 10: " + mayoresA10);
-        System.out.println("Menores a 10: " + menoresA10);
+        return stats;
+    }
+
+    // Métodos auxiliares para reducir complejidad
+    private void procesarNumero(int numero, Stats stats) {
+        stats.suma += numero;
+        stats.multiplicacion *= numero;
         
-        // Más código repetitivo
-        for (int par : pares) {
-            System.out.println("Procesando par: " + par);
-            if (par > 20) {
-                System.out.println("Par mayor a 20");
-            } else if (par > 10) {
-                System.out.println("Par mayor a 10");
-            } else {
-                System.out.println("Par menor o igual a 10");
-            }
+        if (esPar(numero)) {
+            stats.pares.add(numero);
+        } else {
+            stats.impares.add(numero);
         }
         
-        for (int impar : impares) {
-            System.out.println("Procesando impar: " + impar);
-            if (impar > 20) {
-                System.out.println("Impar mayor a 20");
-            } else if (impar > 10) {
-                System.out.println("Impar mayor a 10");
-            } else {
-                System.out.println("Impar menor o igual a 10");
-            }
+        clasificarPorValor(numero, stats);
+    }
+
+    private boolean esPar(int numero) {
+        return numero % 2 == 0;
+    }
+
+    private void clasificarPorValor(int numero, Stats stats) {
+        if (numero > LIMITE_MAYOR) {
+            stats.mayoresAlLimite.add(numero);
+        } else {
+            stats.menoresAlLimite.add(numero);
         }
     }
 
-    // 2. Duplications Issue: Métodos con código duplicado
-    public String mensaje1(String nombre) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            return "Hola desconocido";
+    private double calcularPromedio(int suma, int cantidad) {
+        return cantidad > 0 ? (double) suma / cantidad : 0.0;
+    }
+
+    private void imprimirResumen(Stats stats) {
+        LOGGER.info("Suma: " + stats.suma);
+        LOGGER.info("Multiplicación: " + stats.multiplicacion);
+        LOGGER.info("Promedio: " + stats.promedio);
+        LOGGER.info("Números pares: " + stats.pares);
+        LOGGER.info("Números impares: " + stats.impares);
+        LOGGER.info("Mayores a " + LIMITE_MAYOR + ": " + stats.mayoresAlLimite);
+        LOGGER.info("Menores a " + LIMITE_MAYOR + ": " + stats.menoresAlLimite);
+    }
+
+    private void procesarListasNumeros(Stats stats) {
+        procesarLista("par", stats.pares);
+        procesarLista("impar", stats.impares);
+    }
+
+    private void procesarLista(String tipo, List<Integer> numeros) {
+        for (int num : numeros) {
+            LOGGER.info("Procesando " + tipo + ": " + num);
+            clasificarNumero(num, tipo);
         }
-        return "Hola " + nombre + ", bienvenido al sistema";
     }
 
-    public String mensaje2(String usuario) {
-        if (usuario == null || usuario.trim().isEmpty()) {
-            return "Hola desconocido";
+    private void clasificarNumero(int numero, String tipo) {
+        String mensaje;
+        if (numero > LIMITE_MUY_MAYOR) {
+            mensaje = tipo + " mayor a " + LIMITE_MUY_MAYOR;
+        } else if (numero > LIMITE_MAYOR) {
+            mensaje = tipo + " mayor a " + LIMITE_MAYOR;
+        } else {
+            mensaje = tipo + " menor o igual a " + LIMITE_MAYOR;
         }
-        return "Hola " + usuario + ", bienvenido al sistema";
+        LOGGER.info(mensaje);
     }
 
-    public String mensaje3(String visitante) {
-        if (visitante == null || visitante.trim().isEmpty()) {
-            return "Hola desconocido";
+    // Método unificado para mensajes (eliminada duplicación)
+    public String generarMensajeBienvenida(String nombre) {
+        String nombreValidado = validarNombre(nombre);
+        return "Hola " + nombreValidado + ", bienvenido al sistema";
+    }
+
+    private String validarNombre(String nombre) {
+        return (nombre == null || nombre.trim().isEmpty()) ? "desconocido" : nombre.trim();
+    }
+
+    // Reliability Issues corregidos con validaciones
+    public double divisionSegura(int numerador, int denominador) {
+        if (denominador == 0) {
+            LOGGER.warning("Intento de división por cero");
+            return 0.0;
         }
-        return "Hola " + visitante + ", bienvenido al sistema";
+        return (double) numerador / denominador;
     }
 
-    // 3. Reliability Issues: Posibles errores en tiempo de ejecución
-    public int divisionPeligrosa(int numerador, int denominador) {
-        // División por cero potencial
-        return numerador / denominador;  // Sin validación del denominador
+    public int accederArray(int[] array, int indice) {
+        if (array == null) {
+            throw new IllegalArgumentException("El array no puede ser nulo");
+        }
+        if (indice < 0 || indice >= array.length) {
+            throw new IndexOutOfBoundsException("Índice " + indice + " fuera de rango");
+        }
+        return array[indice];
     }
 
-    public int accesoPeligrosoArray(int[] array, int indice) {
-        // Acceso a índice sin validar
-        return array[indice];  // Sin validación del índice
+    public String procesarTexto(String texto) {
+        if (texto == null) {
+            LOGGER.warning("Se recibió un texto nulo");
+            return "";
+        }
+        return texto.toLowerCase();
     }
 
-    public String longitudString(String texto) {
-        // Null pointer potencial
-        return texto.toLowerCase();  // Sin validación de null
-    }
-
-    // 4. Coverage Issue: Métodos sin tests o con tests incompletos
+    // Métodos para coverage con validaciones
     public int calculoComplejo(int a, int b, String operacion) {
-        switch (operacion.toLowerCase()) {
-            case "suma":
-                return a + b;
-            case "resta":
-                return a - b;
-            case "multiplicacion":
-                return a * b;
-            case "division":
-                if (b != 0) {
-                    return a / b;
-                }
-                return 0;
-            case "potencia":
-                return (int) Math.pow(a, b);
-            default:
-                return 0;
+        if (operacion == null) {
+            throw new IllegalArgumentException("La operación no puede ser nula");
         }
+
+        return switch (operacion.toLowerCase()) {
+            case "suma" -> a + b;
+            case "resta" -> a - b;
+            case "multiplicacion" -> a * b;
+            case "division" -> validarYDividir(a, b);
+            case "potencia" -> validarYCalcularPotencia(a, b);
+            default -> throw new IllegalArgumentException("Operación no soportada: " + operacion);
+        };
+    }
+
+    private int validarYDividir(int a, int b) {
+        if (b == 0) {
+            throw new ArithmeticException("División por cero no permitida");
+        }
+        return a / b;
+    }
+
+    private int validarYCalcularPotencia(int base, int exponente) {
+        if (exponente < 0) {
+            throw new IllegalArgumentException("Exponente negativo no soportado");
+        }
+        return (int) Math.pow(base, exponente);
     }
 
     public boolean validarRango(int numero, int min, int max) {
-        if (numero < min) {
-            return false;
+        if (min > max) {
+            throw new IllegalArgumentException("El mínimo no puede ser mayor que el máximo");
         }
-        if (numero > max) {
-            return false;
-        }
-        return true;
+        return numero >= min && numero <= max;
     }
 }

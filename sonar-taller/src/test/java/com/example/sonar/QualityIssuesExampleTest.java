@@ -24,7 +24,7 @@ class QualityIssuesExampleTest {
     // Test parcial de mensajes: solo prueba un caso
     @Test
     void testMensaje1() {
-        assertEquals("Hola Juan, bienvenido al sistema", example.mensaje1("Juan"));
+        assertEquals("Hola Juan, bienvenido al sistema", example.generarMensajeBienvenida("Juan"));
         // No se prueba: null, cadena vacía, otros casos
     }
 }
