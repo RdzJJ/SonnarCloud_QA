@@ -15,7 +15,7 @@ public class Stats {
 
     public Stats() {
         this.suma = 0;
-        this.multiplicacion = 1;
+        this.multiplicacion = 0;
         this.promedio = 0.0;
         this.pares = new ArrayList<>();
         this.impares = new ArrayList<>();
@@ -28,7 +28,11 @@ public class Stats {
     }
 
     public void agregarMultiplicacion(int valor) {
-        this.multiplicacion *= valor;
+        if (this.multiplicacion == 0) {
+            this.multiplicacion = valor;
+        } else {
+            this.multiplicacion *= valor;
+        }
     }
 
     public void setPares(int valor) {
