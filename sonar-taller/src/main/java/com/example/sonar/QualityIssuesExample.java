@@ -1,24 +1,12 @@
 package com.example.sonar;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class QualityIssuesExample {
     private static final Logger LOGGER = Logger.getLogger(QualityIssuesExample.class.getName());
     private static final int LIMITE_MAYOR = 10;
     private static final int LIMITE_MUY_MAYOR = 20;
-    
-    // Clase auxiliar para mantener estadísticas
-    private static class Stats {
-        int suma = 0;
-        int multiplicacion = 1;
-        double promedio = 0;
-        List<Integer> pares = new ArrayList<>();
-        List<Integer> impares = new ArrayList<>();
-        List<Integer> mayoresAlLimite = new ArrayList<>();
-        List<Integer> menoresAlLimite = new ArrayList<>();
-    }
 
     // Método principal refactorizado
     public Stats procesamientoDeDatos(int[] datos) {
@@ -32,7 +20,7 @@ public class QualityIssuesExample {
             procesarNumero(numero, stats);
         }
         
-        stats.promedio = calcularPromedio(stats.suma, datos.length);
+        stats.setPromedio(calcularPromedio(stats.getSuma(), datos.length));
         imprimirResumen(stats);
         procesarListasNumeros(stats);
         
@@ -41,13 +29,13 @@ public class QualityIssuesExample {
 
     // Métodos auxiliares para reducir complejidad
     private void procesarNumero(int numero, Stats stats) {
-        stats.suma += numero;
-        stats.multiplicacion *= numero;
+        stats.agregarSuma(numero);
+        stats.agregarMultiplicacion(numero);
         
         if (esPar(numero)) {
-            stats.pares.add(numero);
+            stats.setPares(numero);
         } else {
-            stats.impares.add(numero);
+            stats.setImpares(numero);
         }
         
         clasificarPorValor(numero, stats);
@@ -59,9 +47,9 @@ public class QualityIssuesExample {
 
     private void clasificarPorValor(int numero, Stats stats) {
         if (numero > LIMITE_MAYOR) {
-            stats.mayoresAlLimite.add(numero);
+            stats.setMayoresAlLimite(numero);
         } else {
-            stats.menoresAlLimite.add(numero);
+            stats.setMenoresAlLimite(numero);
         }
     }
 
@@ -70,23 +58,23 @@ public class QualityIssuesExample {
     }
 
     private void imprimirResumen(Stats stats) {
-        LOGGER.info("Suma: " + stats.suma);
-        LOGGER.info("Multiplicación: " + stats.multiplicacion);
-        LOGGER.info("Promedio: " + stats.promedio);
-        LOGGER.info("Números pares: " + stats.pares);
-        LOGGER.info("Números impares: " + stats.impares);
-        LOGGER.info("Mayores a " + LIMITE_MAYOR + ": " + stats.mayoresAlLimite);
-        LOGGER.info("Menores a " + LIMITE_MAYOR + ": " + stats.menoresAlLimite);
+        LOGGER.info(String.format("Suma: %d", stats.getSuma()));
+        LOGGER.info(String.format("Multiplicación: %d", stats.getMultiplicacion()));
+        LOGGER.info(String.format("Promedio: %.2f", stats.getPromedio()));
+        LOGGER.info(String.format("Números pares: %s", stats.getPares()));
+        LOGGER.info(String.format("Números impares: %s", stats.getImpares()));
+        LOGGER.info(String.format("Mayores a %d: %s", LIMITE_MAYOR, stats.getMayoresAlLimite()));
+        LOGGER.info(String.format("Menores a %d: %s", LIMITE_MAYOR, stats.getMenoresAlLimite()));
     }
 
     private void procesarListasNumeros(Stats stats) {
-        procesarLista("par", stats.pares);
-        procesarLista("impar", stats.impares);
+        procesarLista("par", stats.getPares());
+        procesarLista("impar", stats.getImpares());
     }
 
     private void procesarLista(String tipo, List<Integer> numeros) {
         for (int num : numeros) {
-            LOGGER.info("Procesando " + tipo + ": " + num);
+            LOGGER.info(String.format("Procesando %s: %d", tipo, num));
             clasificarNumero(num, tipo);
         }
     }
@@ -94,11 +82,11 @@ public class QualityIssuesExample {
     private void clasificarNumero(int numero, String tipo) {
         String mensaje;
         if (numero > LIMITE_MUY_MAYOR) {
-            mensaje = tipo + " mayor a " + LIMITE_MUY_MAYOR;
+            mensaje = String.format("%s mayor a %d", tipo, LIMITE_MUY_MAYOR);
         } else if (numero > LIMITE_MAYOR) {
-            mensaje = tipo + " mayor a " + LIMITE_MAYOR;
+            mensaje = String.format("%s mayor a %d", tipo, LIMITE_MAYOR);
         } else {
-            mensaje = tipo + " menor o igual a " + LIMITE_MAYOR;
+            mensaje = String.format("%s menor o igual a %d", tipo, LIMITE_MAYOR);
         }
         LOGGER.info(mensaje);
     }
@@ -106,7 +94,7 @@ public class QualityIssuesExample {
     // Método unificado para mensajes (eliminada duplicación)
     public String generarMensajeBienvenida(String nombre) {
         String nombreValidado = validarNombre(nombre);
-        return "Hola " + nombreValidado + ", bienvenido al sistema";
+        return String.format("Hola %s, bienvenido al sistema", nombreValidado);
     }
 
     private String validarNombre(String nombre) {
@@ -116,7 +104,7 @@ public class QualityIssuesExample {
     // Reliability Issues corregidos con validaciones
     public double divisionSegura(int numerador, int denominador) {
         if (denominador == 0) {
-            LOGGER.warning("Intento de división por cero");
+            LOGGER.warning(String.format("Intento de división por cero en %d/%d", numerador, denominador));
             return 0.0;
         }
         return (double) numerador / denominador;
@@ -127,7 +115,7 @@ public class QualityIssuesExample {
             throw new IllegalArgumentException("El array no puede ser nulo");
         }
         if (indice < 0 || indice >= array.length) {
-            throw new IndexOutOfBoundsException("Índice " + indice + " fuera de rango");
+            throw new IndexOutOfBoundsException(String.format("Índice %d fuera de rango [0-%d]", indice, array.length - 1));
         }
         return array[indice];
     }
