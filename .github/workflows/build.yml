@@ -52,6 +52,17 @@ jobs:
           ls -la target/site || true;
           ls -la target/site/jacoco || true
 
+      - name: Print jacoco xml head (if exists)
+        run: |
+          if [ -f target/site/jacoco/jacoco.xml ]; then echo "--- jacoco.xml head ---"; head -n 60 target/site/jacoco/jacoco.xml; else echo "jacoco.xml not found"; fi
+
+      - name: Upload jacoco report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/jacoco.xml
+          if-no-files-found: warn
+
       - name: Check SONAR_TOKEN presence
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -61,10 +72,10 @@ jobs:
       - name: Run SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-          -Dsonar.projectKey=RdzJJ_SonnarCloud_QA \
+        run: mvn -Dsonar.projectKey=RdzJJ_SonnarCloud_QA \
           -Dsonar.organization=rdzijj \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ env.SONAR_TOKEN }} \
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-          -Dsonar.verbose=true
+          -Dsonar.verbose=true \
+          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
